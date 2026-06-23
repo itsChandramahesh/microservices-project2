@@ -60,9 +60,10 @@ pipeline {
                 python3 -m venv .venv
                 . .venv/bin/activate
                 export PYTHONPATH=$PWD
+                python -c 'import sys; print(sys.path)'
                 pip install --upgrade pip
                 pip install -r requirements.txt
-                pytest --cov=app --cov-report=xml
+                pytest --import-mode=importlib --cov=app --cov-report=xml
               """
             }
           }
@@ -75,9 +76,10 @@ pipeline {
                 python3 -m venv .venv
                 . .venv/bin/activate
                 export PYTHONPATH=$PWD
+                python -c 'import sys; print(sys.path)'
                 pip install --upgrade pip
                 pip install -r requirements.txt
-                pytest --cov=app --cov-report=xml
+                pytest --import-mode=importlib --cov=app --cov-report=xml
               """
             }
           }
@@ -90,9 +92,10 @@ pipeline {
                 python3 -m venv .venv
                 . .venv/bin/activate
                 export PYTHONPATH=$PWD
+                python -c 'import sys; print(sys.path)'
                 pip install --upgrade pip
                 pip install -r requirements.txt
-                pytest --cov=app --cov-report=xml
+                pytest --import-mode=importlib --cov=app --cov-report=xml
               """
             }
           }
@@ -105,9 +108,10 @@ pipeline {
                 python3 -m venv .venv
                 . .venv/bin/activate
                 export PYTHONPATH=$PWD
+                python -c 'import sys; print(sys.path)'
                 pip install --upgrade pip
                 pip install -r requirements.txt
-                pytest --cov=app --cov-report=xml
+                pytest --import-mode=importlib --cov=app --cov-report=xml
               """
             }
           }

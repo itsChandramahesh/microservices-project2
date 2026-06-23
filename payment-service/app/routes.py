@@ -7,7 +7,7 @@ from .models import Payment
 from .crud import create
 from .auth import claims
 router=APIRouter()
-@router.post("",response_model=PaymentOut,status_code=201)
+@router.post("/",response_model=PaymentOut,status_code=201)
 def pay(data:PaymentCreate,c=Depends(claims),db:Session=Depends(get_db)):return create(db,data,c["sub"])
 @router.get("/admin/stats")
 def stats(c=Depends(claims),db:Session=Depends(get_db)):

@@ -6,7 +6,7 @@ from .models import Product
 from . import schemas,crud
 from .auth import admin
 router=APIRouter()
-@router.get("",response_model=list[schemas.ProductOut])
+@router.get("/",response_model=list[schemas.ProductOut])
 def products(q:str|None=None,category:str|None=None,page:int=Query(1,ge=1),size:int=Query(20,ge=1,le=100),db:Session=Depends(get_db)): return crud.list_(db,q,category,(page-1)*size,size)
 @router.get("/admin/stats",dependencies=[Depends(admin)])
 def stats(db:Session=Depends(get_db)):
@@ -15,7 +15,7 @@ def stats(db:Session=Depends(get_db)):
 def product(product_id:int,db:Session=Depends(get_db)):
     if not (obj:=db.get(Product,product_id)):raise HTTPException(404,"Product not found")
     return obj
-@router.post("",response_model=schemas.ProductOut,status_code=201,dependencies=[Depends(admin)])
+@router.post("/",response_model=schemas.ProductOut,status_code=201,dependencies=[Depends(admin)])
 def create(data:schemas.ProductCreate,db:Session=Depends(get_db)):return crud.create(db,data)
 @router.put("/{product_id}",response_model=schemas.ProductOut,dependencies=[Depends(admin)])
 def update(product_id:int,data:schemas.ProductUpdate,db:Session=Depends(get_db)):

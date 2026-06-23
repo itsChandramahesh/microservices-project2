@@ -10,7 +10,7 @@ from .schemas import OrderOut,Status
 from .auth import claims,admin
 from .crud import user_orders
 router=APIRouter()
-@router.post("",response_model=OrderOut,status_code=201)
+@router.post("/",response_model=OrderOut,status_code=201)
 async def create(authorization:str=Header(...),c=Depends(claims),db:Session=Depends(get_db)):
  async with httpx.AsyncClient(timeout=10) as client:
   cart=(await client.get(settings.cart_url,headers={"Authorization":authorization})).json()
@@ -24,7 +24,7 @@ async def create(authorization:str=Header(...),c=Depends(claims),db:Session=Depe
   order=Order(user_id=c["sub"],total=total,items=rows);db.add(order);db.commit();db.refresh(order)
   await client.delete(settings.cart_url,headers={"Authorization":authorization})
   return order
-@router.get("",response_model=list[OrderOut])
+@router.get("/",response_model=list[OrderOut])
 def list_orders(c=Depends(claims),db:Session=Depends(get_db)):return user_orders(db,c["sub"])
 @router.get("/admin/stats",dependencies=[Depends(admin)])
 def stats(db:Session=Depends(get_db)):return {"total_orders":db.scalar(select(func.count(Order.id))) or 0}

@@ -12,7 +12,7 @@ pipeline {
     SOURCE_DIR = "source"
     MINIKUBE_PROFILE = "minikube"
     REGISTRY = "docker.io"
-    TAG = "${env.BUILD_NUMBER ?: 'local'}"
+    IMAGE_TAG = "local"
   }
 
   stages {
@@ -122,28 +122,28 @@ pipeline {
     stage("Build Images") {
       parallel {
         stage("api-gateway") {
-          steps { sh "docker build -t ecommerce/api-gateway:${TAG} ${APP_DIR}/api-gateway" }
+          steps { sh "docker build -t ecommerce/api-gateway:${IMAGE_TAG} ${APP_DIR}/api-gateway" }
         }
         stage("user-service") {
-          steps { sh "docker build -t ecommerce/user-service:${TAG} ${APP_DIR}/user-service" }
+          steps { sh "docker build -t ecommerce/user-service:${IMAGE_TAG} ${APP_DIR}/user-service" }
         }
         stage("product-service") {
-          steps { sh "docker build -t ecommerce/product-service:${TAG} ${APP_DIR}/product-service" }
+          steps { sh "docker build -t ecommerce/product-service:${IMAGE_TAG} ${APP_DIR}/product-service" }
         }
         stage("cart-service") {
-          steps { sh "docker build -t ecommerce/cart-service:${TAG} ${APP_DIR}/cart-service" }
+          steps { sh "docker build -t ecommerce/cart-service:${IMAGE_TAG} ${APP_DIR}/cart-service" }
         }
         stage("inventory-service") {
-          steps { sh "docker build -t ecommerce/inventory-service:${TAG} ${APP_DIR}/inventory-service" }
+          steps { sh "docker build -t ecommerce/inventory-service:${IMAGE_TAG} ${APP_DIR}/inventory-service" }
         }
         stage("order-service") {
-          steps { sh "docker build -t ecommerce/order-service:${TAG} ${APP_DIR}/order-service" }
+          steps { sh "docker build -t ecommerce/order-service:${IMAGE_TAG} ${APP_DIR}/order-service" }
         }
         stage("payment-service") {
-          steps { sh "docker build -t ecommerce/payment-service:${TAG} ${APP_DIR}/payment-service" }
+          steps { sh "docker build -t ecommerce/payment-service:${IMAGE_TAG} ${APP_DIR}/payment-service" }
         }
         stage("admin-service") {
-          steps { sh "docker build -t ecommerce/admin-service:${TAG} ${APP_DIR}/admin-service" }
+          steps { sh "docker build -t ecommerce/admin-service:${IMAGE_TAG} ${APP_DIR}/admin-service" }
         }
       }
     }
@@ -154,14 +154,14 @@ pipeline {
           minikube start -p ${MINIKUBE_PROFILE}
           kubectl config use-context ${MINIKUBE_PROFILE}
           kubectl get nodes
-          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/api-gateway:${TAG}
-          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/user-service:${TAG}
-          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/product-service:${TAG}
-          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/cart-service:${TAG}
-          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/inventory-service:${TAG}
-          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/order-service:${TAG}
-          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/payment-service:${TAG}
-          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/admin-service:${TAG}
+          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/api-gateway:${IMAGE_TAG}
+          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/user-service:${IMAGE_TAG}
+          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/product-service:${IMAGE_TAG}
+          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/cart-service:${IMAGE_TAG}
+          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/inventory-service:${IMAGE_TAG}
+          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/order-service:${IMAGE_TAG}
+          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/payment-service:${IMAGE_TAG}
+          minikube -p ${MINIKUBE_PROFILE} image load ecommerce/admin-service:${IMAGE_TAG}
         """
       }
     }

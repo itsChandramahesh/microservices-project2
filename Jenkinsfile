@@ -32,28 +32,48 @@ pipeline {
         stage("api-gateway") {
           steps {
             dir("${APP_DIR}/api-gateway") {
-              sh "python -m pip install --upgrade pip && pip install -r requirements.txt && pytest --cov=app --cov-report=xml"
+              sh """
+                python3 --version
+                python3 -m pip install --upgrade pip
+                python3 -m pip install -r requirements.txt
+                python3 -m pytest --cov=app --cov-report=xml
+              """
             }
           }
         }
         stage("user-service") {
           steps {
             dir("${APP_DIR}/user-service") {
-              sh "python -m pip install --upgrade pip && pip install -r requirements.txt && pytest --cov=app --cov-report=xml"
+              sh """
+                python3 --version
+                python3 -m pip install --upgrade pip
+                python3 -m pip install -r requirements.txt
+                python3 -m pytest --cov=app --cov-report=xml
+              """
             }
           }
         }
         stage("product-service") {
           steps {
             dir("${APP_DIR}/product-service") {
-              sh "python -m pip install --upgrade pip && pip install -r requirements.txt && pytest --cov=app --cov-report=xml"
+              sh """
+                python3 --version
+                python3 -m pip install --upgrade pip
+                python3 -m pip install -r requirements.txt
+                python3 -m pytest --cov=app --cov-report=xml
+              """
             }
           }
         }
         stage("cart-service") {
           steps {
             dir("${APP_DIR}/cart-service") {
-              sh "python -m pip install --upgrade pip && pip install -r requirements.txt && pytest --cov=app --cov-report=xml"
+              sh """
+                python3 --version
+                python3 -m pip install --upgrade pip
+                python3 -m pip install -r requirements.txt
+                python3 -m pytest --cov=app --cov-report=xml
+              """
             }
           }
         }

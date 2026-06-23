@@ -7,8 +7,11 @@ pipeline {
   }
 
   environment {
-    APP_DIR = "ecommerce"
-    K8S_DIR = "ecommerce/k8s"
+    GIT_REPO_URL = "https://github.com/itsChandramahesh/microservices-project2.git"
+    GIT_BRANCH = "main"
+    SOURCE_DIR = "source"
+    APP_DIR = "source/ecommerce"
+    K8S_DIR = "source/ecommerce/k8s"
     MINIKUBE_PROFILE = "minikube"
     REGISTRY = "docker.io"
     TAG = "${env.BUILD_NUMBER ?: 'local'}"
@@ -17,7 +20,10 @@ pipeline {
   stages {
     stage("Checkout") {
       steps {
-        checkout scm
+        sh """
+          rm -rf ${SOURCE_DIR}
+          git clone --branch ${GIT_BRANCH} --single-branch ${GIT_REPO_URL} ${SOURCE_DIR}
+        """
       }
     }
 

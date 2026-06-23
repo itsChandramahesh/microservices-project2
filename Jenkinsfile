@@ -59,6 +59,7 @@ pipeline {
                 python3 --version
                 python3 -m venv .venv
                 . .venv/bin/activate
+                export PYTHONPATH=$PWD
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 pytest --cov=app --cov-report=xml
@@ -73,6 +74,7 @@ pipeline {
                 python3 --version
                 python3 -m venv .venv
                 . .venv/bin/activate
+                export PYTHONPATH=$PWD
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 pytest --cov=app --cov-report=xml
@@ -87,6 +89,7 @@ pipeline {
                 python3 --version
                 python3 -m venv .venv
                 . .venv/bin/activate
+                export PYTHONPATH=$PWD
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 pytest --cov=app --cov-report=xml
@@ -101,6 +104,7 @@ pipeline {
                 python3 --version
                 python3 -m venv .venv
                 . .venv/bin/activate
+                export PYTHONPATH=$PWD
                 pip install --upgrade pip
                 pip install -r requirements.txt
                 pytest --cov=app --cov-report=xml

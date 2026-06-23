@@ -10,8 +10,6 @@ pipeline {
     GIT_REPO_URL = "https://github.com/itsChandramahesh/microservices-project2.git"
     GIT_BRANCH = "main"
     SOURCE_DIR = "source"
-    APP_DIR = "source/ecommerce"
-    K8S_DIR = "source/ecommerce/k8s"
     MINIKUBE_PROFILE = "minikube"
     REGISTRY = "docker.io"
     TAG = "${env.BUILD_NUMBER ?: 'local'}"
@@ -24,6 +22,31 @@ pipeline {
           rm -rf ${SOURCE_DIR}
           git clone --branch ${GIT_BRANCH} --single-branch ${GIT_REPO_URL} ${SOURCE_DIR}
         """
+      }
+    }
+
+    stage("Detect Layout") {
+      steps {
+        script {
+          def layout = sh(
+            script: """
+              set -eu
+              if [ -d "${SOURCE_DIR}/ecommerce/api-gateway" ]; then
+                printf 'ecommerce\\nsource/ecommerce'
+                exit 0
+              fi
+              if [ -d "${SOURCE_DIR}/api-gateway" ]; then
+                printf '.\\nsource'
+                exit 0
+              fi
+              printf 'unknown\\nunknown'
+            """,
+            returnStdout: true
+          ).trim().split("\\n")
+          env.PROJECT_SUBDIR = layout[0]
+          env.APP_DIR = layout[1]
+          env.K8S_DIR = "${SOURCE_DIR}/${env.PROJECT_SUBDIR}/k8s"
+        }
       }
     }
 
@@ -120,7 +143,7 @@ pipeline {
     stage("Minikube Load Images") {
       steps {
         sh """
-          minikube profile ${MINIKUBE_PROFILE} || minikube start -p ${MINIKUBE_PROFILE}
+          minikube start -p ${MINIKUBE_PROFILE}
           minikube -p ${MINIKUBE_PROFILE} image load ecommerce/api-gateway:${TAG}
           minikube -p ${MINIKUBE_PROFILE} image load ecommerce/user-service:${TAG}
           minikube -p ${MINIKUBE_PROFILE} image load ecommerce/product-service:${TAG}

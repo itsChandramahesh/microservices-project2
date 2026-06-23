@@ -1,0 +1,16 @@
+global:
+  smtp_smarthost: ${SMTP_SMARTHOST}
+  smtp_from: ${SMTP_FROM}
+  smtp_auth_username: ${SMTP_USERNAME}
+  smtp_auth_password: ${SMTP_PASSWORD}
+  smtp_require_tls: true
+route:
+  receiver: email-default
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 1h
+receivers:
+  - name: email-default
+    email_configs:
+      - to: ${ALERT_EMAIL_TO}
+        send_resolved: true

@@ -1,0 +1,140 @@
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports: ["8080:8000"]
+    depends_on: [user-service, product-service, cart-service, inventory-service, order-service, payment-service, admin-service]
+  user-service:
+    build: ./user-service
+    environment: {DATABASE_URL: postgresql+psycopg://user:userpass@user-db:5432/users, JWT_SECRET: change-me}
+    depends_on: [user-db]
+  product-service:
+    build: ./product-service
+    environment: {DATABASE_URL: mysql+pymysql://product:productpass@product-db:3306/products, JWT_SECRET: change-me}
+    depends_on: [product-db]
+  cart-service:
+    build: ./cart-service
+    environment: {REDIS_URL: redis://cart-db:6379/0, JWT_SECRET: change-me}
+    depends_on: [cart-db]
+  inventory-service:
+    build: ./inventory-service
+    environment: {MONGODB_URL: mongodb://inventory-db:27017, MONGODB_DB: inventory, JWT_SECRET: change-me}
+    depends_on: [inventory-db]
+  order-service:
+    build: ./order-service
+    environment: {DATABASE_URL: postgresql+psycopg://order:orderpass@order-db:5432/orders, JWT_SECRET: change-me}
+    depends_on: [order-db]
+  payment-service:
+    build: ./payment-service
+    environment: {DATABASE_URL: postgresql+psycopg://payment:paymentpass@payment-db:5432/payments, JWT_SECRET: change-me}
+    depends_on: [payment-db]
+  admin-service:
+    build: ./admin-service
+    environment: {DATABASE_URL: postgresql+psycopg://admin:adminpass@admin-db:5432/admin, JWT_SECRET: change-me}
+    depends_on: [admin-db]
+  user-db:
+    image: postgres:16-alpine
+    environment: {POSTGRES_DB: users, POSTGRES_USER: user, POSTGRES_PASSWORD: userpass}
+    volumes: [user-data:/var/lib/postgresql/data]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d users"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  product-db:
+    image: mysql:8.4
+    environment: {MYSQL_DATABASE: products, MYSQL_USER: product, MYSQL_PASSWORD: productpass, MYSQL_ROOT_PASSWORD: rootpass}
+    volumes: [product-data:/var/lib/mysql]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  order-db:
+    image: postgres:16-alpine
+    environment: {POSTGRES_DB: orders, POSTGRES_USER: order, POSTGRES_PASSWORD: orderpass}
+    volumes: [order-data:/var/lib/postgresql/data]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U order -d orders"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  payment-db:
+    image: postgres:16-alpine
+    environment: {POSTGRES_DB: payments, POSTGRES_USER: payment, POSTGRES_PASSWORD: paymentpass}
+    volumes: [payment-data:/var/lib/postgresql/data]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payment -d payments"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  admin-db:
+    image: postgres:16-alpine
+    environment: {POSTGRES_DB: admin, POSTGRES_USER: admin, POSTGRES_PASSWORD: adminpass}
+    volumes: [admin-data:/var/lib/postgresql/data]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  cart-db:
+    image: redis:7.4-alpine
+    volumes: [cart-data:/data]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  inventory-db:
+    image: mongo:8.0
+    volumes: [inventory-data:/data/db]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    ports: ["9090:9090"]
+    volumes:
+      - ./k8s/monitoring-prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  grafana:
+    image: grafana/grafana:11.1.0
+    ports: ["3000:3000"]
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    ports: ["9093:9093"]
+    environment:
+      SMTP_SMARTHOST: ${SMTP_SMARTHOST}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      ALERT_EMAIL_TO: ${ALERT_EMAIL_TO}
+    command:
+      - /bin/sh
+      - -c
+      - >
+        sed
+        -e "s|\${SMTP_SMARTHOST}|${SMTP_SMARTHOST}|g"
+        -e "s|\${SMTP_FROM}|${SMTP_FROM}|g"
+        -e "s|\${SMTP_USERNAME}|${SMTP_USERNAME}|g"
+        -e "s|\${SMTP_PASSWORD}|${SMTP_PASSWORD}|g"
+        -e "s|\${ALERT_EMAIL_TO}|${ALERT_EMAIL_TO}|g"
+        /etc/alertmanager/alertmanager.yml.tpl > /tmp/alertmanager.yml
+        && /bin/alertmanager --config.file=/tmp/alertmanager.yml --storage.path=/alertmanager
+    volumes:
+      - ./monitoring-alertmanager.yml.tpl:/etc/alertmanager/alertmanager.yml.tpl:ro
+volumes:
+  user-data: {}
+  product-data: {}
+  order-data: {}
+  payment-data: {}
+  admin-data: {}
+  cart-data: {}
+  inventory-data: {}

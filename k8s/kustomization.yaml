@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - monitoring-namespace.yaml
+  - configmap.yaml
+  - monitoring-configmap.yaml
+  - secret.yaml
+  - api-gateway.yaml
+  - user-service.yaml
+  - product-service.yaml
+  - cart-service.yaml
+  - inventory-service.yaml
+  - order-service.yaml
+  - payment-service.yaml
+  - admin-service.yaml
+  - user-db.yaml
+  - order-db.yaml
+  - payment-db.yaml
+  - admin-db.yaml
+  - product-db.yaml
+  - cart-db.yaml
+  - inventory-db.yaml
+  - ingress.yaml
+  - prometheus.yaml
+  - grafana.yaml
+  - alertmanager.yaml

@@ -34,9 +34,11 @@ pipeline {
             dir("${APP_DIR}/api-gateway") {
               sh """
                 python3 --version
-                python3 -m pip install --upgrade pip
-                python3 -m pip install -r requirements.txt
-                python3 -m pytest --cov=app --cov-report=xml
+                python3 -m venv .venv
+                . .venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                pytest --cov=app --cov-report=xml
               """
             }
           }
@@ -46,9 +48,11 @@ pipeline {
             dir("${APP_DIR}/user-service") {
               sh """
                 python3 --version
-                python3 -m pip install --upgrade pip
-                python3 -m pip install -r requirements.txt
-                python3 -m pytest --cov=app --cov-report=xml
+                python3 -m venv .venv
+                . .venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                pytest --cov=app --cov-report=xml
               """
             }
           }
@@ -58,9 +62,11 @@ pipeline {
             dir("${APP_DIR}/product-service") {
               sh """
                 python3 --version
-                python3 -m pip install --upgrade pip
-                python3 -m pip install -r requirements.txt
-                python3 -m pytest --cov=app --cov-report=xml
+                python3 -m venv .venv
+                . .venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                pytest --cov=app --cov-report=xml
               """
             }
           }
@@ -70,9 +76,11 @@ pipeline {
             dir("${APP_DIR}/cart-service") {
               sh """
                 python3 --version
-                python3 -m pip install --upgrade pip
-                python3 -m pip install -r requirements.txt
-                python3 -m pytest --cov=app --cov-report=xml
+                python3 -m venv .venv
+                . .venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                pytest --cov=app --cov-report=xml
               """
             }
           }

@@ -5,6 +5,7 @@ resources:
   - monitoring-namespace.yaml
   - configmap.yaml
   - monitoring-configmap.yaml
+  - monitoring-secret.yaml
   - secret.yaml
   - api-gateway.yaml
   - user-service.yaml

@@ -55,7 +55,7 @@ spec:
               && /bin/alertmanager --config.file=/tmp/alertmanager.yml --storage.path=/alertmanager
           envFrom:
             - secretRef:
-                name: ecommerce-secrets
+                name: monitoring-secrets
           ports:
             - containerPort: 9093
           volumeMounts:

@@ -152,6 +152,8 @@ pipeline {
       steps {
         sh """
           minikube start -p ${MINIKUBE_PROFILE}
+          kubectl config use-context ${MINIKUBE_PROFILE}
+          kubectl get nodes
           minikube -p ${MINIKUBE_PROFILE} image load ecommerce/api-gateway:${TAG}
           minikube -p ${MINIKUBE_PROFILE} image load ecommerce/user-service:${TAG}
           minikube -p ${MINIKUBE_PROFILE} image load ecommerce/product-service:${TAG}
@@ -166,7 +168,11 @@ pipeline {
 
     stage("Deploy to Minikube") {
       steps {
-        sh "kubectl apply -k ${K8S_DIR}"
+        sh """
+          kubectl config use-context ${MINIKUBE_PROFILE}
+          kubectl apply -k ${K8S_DIR}
+          kubectl get pods -A
+        """
       }
     }
 
@@ -188,7 +194,7 @@ pipeline {
 
   post {
     always {
-      sh 'kubectl get pods -A || true'
+      sh 'kubectl config use-context minikube || true; kubectl get pods -A || true'
     }
   }
 }
